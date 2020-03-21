@@ -1,4 +1,4 @@
-apply plugin: 'com.android.application'
+apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply from: '../versions.gradle'
@@ -6,13 +6,15 @@ apply from: '../versions.gradle'
 android {
     compileSdkVersion android.compileSdkVersion
     buildToolsVersion android.buildToolsVersion
+
     defaultConfig {
-        applicationId "com.sure.app"
         minSdkVersion android.minSdkVersion
         targetSdkVersion android.targetSdkVersion
         versionCode 1
         versionName "1.0"
+
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles 'consumer-rules.pro'
     }
 
     buildTypes {
@@ -32,7 +34,5 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
-    if (isModule){
-        implementation project(path: ':module_home')
-    }
+    api project(path: ':library_network')
 }

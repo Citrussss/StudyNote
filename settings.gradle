@@ -1,2 +1,5 @@
 rootProject.name='StudyNote'
 include ':app'
+include ':module_home'
+include ':libary_common'
+include ':library_network'

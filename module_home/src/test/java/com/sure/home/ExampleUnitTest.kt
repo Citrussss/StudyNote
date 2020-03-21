@@ -1,4 +1,4 @@
-package com.sure.studynote
+package com.sure.home
 
 import org.junit.Test
 
