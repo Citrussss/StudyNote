@@ -11,68 +11,17 @@ import java.nio.charset.Charset
 
 class RetrofitClient private constructor() {
     private var mApiService: ApiService? = null
-    //    private Interceptor getHeaderInterceptor() {
-//        return new Interceptor() {
-//            @Override
-//            public Response intercept(@NonNull Chain chain) throws IOException {
-//                WeakReference<Context> weakReference = MyApplication.mWeakReference;
-//                Context context = weakReference.get();
-//                String phone = (String) SPUtils.get(context, Constant.KEY_USER_PHONE,
-//                        "");
-//                String token = (String) SPUtils.get(context, Constant.KEY_USER_TOKEN,
-//                        "");
-//                Request original = chain.request();
-//                Request.Builder requestBuilder = original.newBuilder()
-//                        //添加Header
-//                        .header(Constant.KEY_HEADER_ACCESS_PHONE, phone)
-//                        .header(Constant.KEY_HEADER_ACCESS_TOKEN, token);
-//                Request request = requestBuilder.build();
-//                return chain.proceed(request);
-//            }
-//        };
-//
-//    }
-    /**
-     * 设置拦截器
-     *
-     * @return
-     */
-    private val mMessage = StringBuilder()
+
 
     // 请求或者响应开始
     // 以{}或者[]形式的说明是响应结果的json数据，需要进行格式化
     // 响应结束，打印整条日志
     //显示日志
     private val interceptor: Interceptor
-        private get() {
-            val interceptor =
-                HttpLoggingInterceptor(HttpLoggingInterceptor.Logger { message: String ->
-                    // 请求或者响应开始
-                    if (message.startsWith("--> POST")) {
-                        mMessage.setLength(0)
-                    }
-                    // 以{}或者[]形式的说明是响应结果的json数据，需要进行格式化
-
-                    mMessage.append(
-                        if (message.startsWith("{") && message.endsWith("}")
-                            || message.startsWith("[") && message.endsWith("]")
-                        ) {
-                            formatJson(
-                                decodeUnicode(message)
-                            )
-                        } else {
-                            message
-                        } + "\n"
-                    )
-                    // 响应结束，打印整条日志
-                    if (message.startsWith("<-- END HTTP")) {
-                        HttpLoggingInterceptor.Logger.DEFAULT.log(mMessage.toString())
-                    }
-                })
-            //显示日志
-            interceptor.level = HttpLoggingInterceptor.Level.BODY
-            return interceptor
+        get() {
+            return providerHttpLoggingInterceptor()
         }
+
 
     /**
      * 获取接口服务类
@@ -93,21 +42,13 @@ class RetrofitClient private constructor() {
      * @return
      */
     private fun buildApi(): ApiService? { //初始化一个client,不然retrofit会自己默认添加一个
-        val client = OkHttpClient().newBuilder() //设置Header
-//                .addInterceptor(getHeaderInterceptor())
-//设置拦截器
-            .addNetworkInterceptor(interceptor) //                .addInterceptor(new TokenFailInterceptor())
-            .build()
-        val retrofit = Retrofit.Builder()
-            .client(client) //设置网络请求的Url地址
-            .baseUrl(NetConstant.BASE_URL) //设置数据解析器
-            .addConverterFactory(GsonConverterFactory.create()) //设置网络请求适配器，使其支持RxJava与RxAndroid
-            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-            .build()
+        val client = providerOkHttpClient()
+        val retrofit = providerRetrofit(client)
         //创建—— 网络请求接口—— 实例
         mApiService = retrofit.create(ApiService::class.java)
         return mApiService
     }
+
 
     companion object {
         @Volatile
@@ -228,5 +169,53 @@ class RetrofitClient private constructor() {
                 sb.append('\t')
             }
         }
+
+        fun providerOkHttpClient(): OkHttpClient {
+            return OkHttpClient().newBuilder() //设置Header
+                //设置拦截器
+                .addNetworkInterceptor(providerHttpLoggingInterceptor())
+                .build()
+        }
+
+        fun providerRetrofit(client: OkHttpClient = providerOkHttpClient()): Retrofit {
+            return Retrofit.Builder()
+                .client(client) //设置网络请求的Url地址
+                .baseUrl(NetConstant.BASE_URL) //设置数据解析器
+                .addConverterFactory(GsonConverterFactory.create()) //设置网络请求适配器，使其支持RxJava与RxAndroid
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                .build()
+        }
+
+        private fun providerHttpLoggingInterceptor(): HttpLoggingInterceptor {
+            val mMessage = StringBuffer()
+            val interceptor =
+                HttpLoggingInterceptor(HttpLoggingInterceptor.Logger { message: String ->
+                    // 请求或者响应开始
+                    if (message.startsWith("--> POST")) {
+                        mMessage.setLength(0)
+                    }
+                    // 以{}或者[]形式的说明是响应结果的json数据，需要进行格式化
+
+                    mMessage.append(
+                        if (message.startsWith("{") && message.endsWith("}")
+                            || message.startsWith("[") && message.endsWith("]")
+                        ) {
+                            formatJson(
+                                decodeUnicode(message)
+                            )
+                        } else {
+                            message
+                        } + "\n"
+                    )
+                    // 响应结束，打印整条日志
+                    if (message.startsWith("<-- END HTTP")) {
+                        HttpLoggingInterceptor.Logger.DEFAULT.log(mMessage.toString())
+                    }
+                })
+            //显示日志
+            interceptor.level = HttpLoggingInterceptor.Level.BODY
+            return interceptor
+        }
+
     }
 }

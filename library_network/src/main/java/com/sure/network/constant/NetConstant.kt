@@ -1,7 +1,6 @@
 package com.sure.network.constant
 
-import android.content.pm.PackageManager
-import com.sure.network.util.NetUtils
+import com.sure.network.BuildConfig
 
 /**
  * author pisa
@@ -10,15 +9,5 @@ import com.sure.network.util.NetUtils
  * effect :数据持久区
  */
 object NetConstant {
-    val BASE_URL: String by lazy {
-        NetUtils.app?.apply {
-            val applicationInfo = this.packageManager.getApplicationInfo(
-                this.packageName, PackageManager.GET_META_DATA
-            );
-            if (applicationInfo.metaData != null) {
-                return@lazy applicationInfo.metaData.get("SURE_BASE_URL").toString();
-            }
-        }
-        return@lazy ""
-    }
+    const val BASE_URL: String = BuildConfig.BASE_URL
 }

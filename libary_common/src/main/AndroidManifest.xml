@@ -1,2 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.sure.common" />
+    package="com.sure.common">
+
+    <application
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme">
+    </application>
+</manifest>
