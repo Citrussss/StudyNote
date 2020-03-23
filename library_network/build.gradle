@@ -15,7 +15,7 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles 'consumer-rules.pro'
-        buildConfigField 'String', 'BASE_URL', "\"https://www.wanandroid.com\""
+        buildConfigField 'String', 'BASE_URL', "\"https://www.wanandroid.com/\""
     }
 
     buildTypes {

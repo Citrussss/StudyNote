@@ -2,6 +2,7 @@ package com.sure.home.ui
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
 import com.sure.network.data.Result
 import com.sure.network.data.api.model.Home
@@ -16,6 +17,7 @@ import kotlinx.coroutines.launch
  */
 class HomeViewModel(val homeRepository: HomeRepository = HomeRepository()) : ViewModel() {
     public val homeData = MutableLiveData<List<Home>>()
+    public val content = homeData.map { it.toString() }
     private var page: Int = 0;
     fun loadData() = viewModelScope.launch {
         val result = homeRepository.loadStories(page)
