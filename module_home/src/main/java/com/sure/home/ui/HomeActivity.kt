@@ -21,6 +21,9 @@ class HomeActivity : AppCompatActivity() {
         viewModel.content.observe(this, Observer {
             tv_content.text = it
         })
+        viewModel.count.observe(this, Observer {
+            tv_title.text = it.toString()
+        })
         viewModel.loadData()
     }
 }

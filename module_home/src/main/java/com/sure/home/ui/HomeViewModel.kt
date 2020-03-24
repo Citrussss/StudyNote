@@ -18,11 +18,16 @@ import kotlinx.coroutines.launch
 class HomeViewModel(val homeRepository: HomeRepository = HomeRepository()) : ViewModel() {
     public val homeData = MutableLiveData<List<Home>>()
     public val content = homeData.map { it.toString() }
+    public val count = MutableLiveData<Int>(0)
     private var page: Int = 0;
     fun loadData() = viewModelScope.launch {
-        val result = homeRepository.loadStories(page)
-        if (result is Result.Success) {
-            homeData.postValue(result.data.datas)
+        //说明ViewModel没有随着Activity销毁
+        count.value = count.value?.plus(1)
+        if (homeData.value == null) {
+            val result = homeRepository.loadStories(page)
+            if (result is Result.Success) {
+                homeData.postValue(result.data.datas)
+            }
         }
     }
 }
