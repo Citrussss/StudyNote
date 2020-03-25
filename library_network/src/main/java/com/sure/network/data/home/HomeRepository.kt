@@ -3,7 +3,6 @@ package com.sure.network.data.home
 import com.sure.network.data.Result
 import com.sure.network.data.api.model.Home
 import com.sure.network.data.api.model.Page
-import java.lang.Exception
 
 /**
  * author pisa
