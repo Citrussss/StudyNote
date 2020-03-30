@@ -14,6 +14,7 @@ class HomeRepository(private val remoteDataSource: HomeRemoteDataSource = HomeRe
 
     suspend fun loadStories(page: Int) = getData {
         remoteDataSource.loadHomeMore(page)
+//        throw Exception("123")
     }
 
     private suspend fun getData(

@@ -25,6 +25,9 @@ class MainActivity : AppCompatActivity() {
         viewModel.count.observe(this, Observer {
             tv_title.text = it.toString()
         })
-        viewModel.loadData()
+//        viewModel.loadData()
+        viewModel.loadData2(this)
+//        viewModel.loadData2()
+
     }
 }
